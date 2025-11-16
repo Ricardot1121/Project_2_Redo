@@ -5,7 +5,7 @@ from datetime import datetime
 # Page Configuration
 # -----------------------------------------------------------
 st.set_page_config(
-    page_title="Data Portfolio – Your Name",
+    page_title="Data Portfolio – Ricardo Torres",
     page_icon="📊",
     layout="wide"
 )
@@ -14,7 +14,7 @@ st.set_page_config(
 # Branding / Header
 # -----------------------------------------------------------
 st.title("📊 Data Science & Visualization Portfolio")
-st.subheader("By **Your Name**")
+st.subheader("By Ricardo Torres")
 st.caption("A multi-page analytics app featuring a professional bio, EDA gallery, dashboard, and future work.")
 
 # -----------------------------------------------------------
@@ -34,7 +34,7 @@ st.markdown(
     Interactive filters, KPIs, linked charts, and narrative interpretation.
 
     ### 🧭 Future Work  
-    Next steps, reflections, and improvements.
+    Next steps, reflections, and areas for improvement.
 
     Use the **sidebar** to navigate between pages.
     """
