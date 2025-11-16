@@ -17,6 +17,7 @@ def load_data():
 
 df = load_data()
 st.write(f"Dataset rows: {len(df)}")
+st.write(f"Available columns: {', '.join(df.columns)}")
 
 # -----------------------------------------------------------
 # Sidebar Filters
@@ -26,7 +27,7 @@ st.sidebar.header("Filters")
 states = sorted(df['State'].dropna().unique())
 selected_states = st.sidebar.multiselect("Select States", states, default=states[:5])
 
-# Temperature range filter
+# Temperature range filter (since we have Temperature(F))
 temp_min = float(df['Temperature(F)'].min()) if not df['Temperature(F)'].isna().all() else 0
 temp_max = float(df['Temperature(F)'].max()) if not df['Temperature(F)'].isna().all() else 100
 selected_temp_range = st.sidebar.slider("Temperature Range (°F)", temp_min, temp_max, (temp_min, temp_max))
@@ -76,98 +77,59 @@ st.write("""
 st.markdown("---")
 
 # -----------------------------------------------------------
-# 2) Histogram — Severity Distribution
+# 2) Histogram — Temperature Distribution
 # -----------------------------------------------------------
-st.subheader("2) Accident Severity Distribution")
-st.write("Question: How are accident severities distributed?")
+st.subheader("2) Temperature Distribution")
+st.write("Question: How are accident temperatures distributed?")
 
 fig_hist = px.histogram(
-    filtered_df,
-    x='Severity',
-    nbins=len(severity_values),
-    labels={'Severity': 'Severity Level'},
-    title='Severity Distribution of Accidents',
-    color='Severity',
+    filtered_df.dropna(subset=['Temperature(F)']),
+    x='Temperature(F)',
+    nbins=30,
+    labels={'Temperature(F)': 'Temperature (°F)'},
+    title='Temperature Distribution of Accidents'
 )
 st.plotly_chart(fig_hist, use_container_width=True)
 
 with st.expander("How to read this chart"):
     st.write("""
-    - X axis: Severity level (1–4)  
+    - X axis: Temperature in Fahrenheit  
     - Y axis: Number of accidents  
-    - Each bar represents the count of accidents for that severity  
+    - Shows the distribution of temperatures when accidents occurred  
     - Filter selections in the sidebar affect this chart
     """)
 
 st.markdown("**Observations:**")
 st.write("""
-- Most accidents are lower severity (1–2) in the sample.  
-- Filtering by states and severity changes the distribution.  
-- Helps understand overall accident severity trends.
+- Most accidents occur in moderate temperature ranges.  
+- Extreme temperatures (very hot or cold) may have fewer accidents.  
+- Temperature filtering affects the distribution shape.
 """)
 
 st.markdown("---")
 
 # -----------------------------------------------------------
-# 3) Scatter Plot — Visibility vs Temperature
+# 3) Scatter Plot — Location Map
 # -----------------------------------------------------------
-st.subheader("3) Visibility vs Temperature")
-st.write("Question: Is visibility related to temperature?")
+st.subheader("3) Accidents by Location")
+st.write("Question: Where do accidents occur geographically?")
 
-scatter_df = filtered_df.dropna(subset=['Visibility(mi)', 'Temperature(F)'])
-if len(scatter_df) > 2000:
-    scatter_df = scatter_df.sample(n=2000, random_state=42)
-
-fig_scatter = px.scatter(
-    scatter_df,
-    x='Temperature(F)',
-    y='Visibility(mi)',
-    color='Severity',
-    hover_data=['Start_Time', 'State', 'City', 'Temperature(F)', 'Visibility(mi)', 'Severity'],
-    title='Visibility vs Temperature by Severity',
-    labels={'Temperature(F)': 'Temperature (°F)', 'Visibility(mi)': 'Visibility (mi)'}
-)
-
-st.plotly_chart(fig_scatter, use_container_width=True)
-
-with st.expander("How to read this chart"):
-    st.write("""
-    - Each dot represents an accident (sampled for performance)  
-    - X axis: temperature in Fahrenheit  
-    - Y axis: visibility in miles  
-    - Color indicates severity  
-    - Hover over points for date, city, temperature, visibility, and severity
-    """)
-
-st.markdown("**Observations:**")
-st.write("""
-- Most points cluster around common visibility values (~10 mi)  
-- No strong linear correlation between temperature and visibility is visible  
-- Color helps distinguish severity trends visually
-""")
-
-st.markdown("---")
-
-# -----------------------------------------------------------
-# 4) Map — Accidents by Location
-# -----------------------------------------------------------
-st.subheader("4) Map of Accidents")
-st.write("Question: Where do most accidents occur geographically?")
-
-map_df = filtered_df.groupby(['City', 'State', 'Latitude', 'Longitude']).size().reset_index(name='Accidents')
+# Sample data for performance if too many points
+map_df = filtered_df.dropna(subset=['Start_Lat', 'Start_Lng'])
+if len(map_df) > 1000:
+    map_df = map_df.sample(n=1000, random_state=42)
 
 fig_map = px.scatter_mapbox(
     map_df,
-    lat='Latitude',
-    lon='Longitude',
-    size='Accidents',
-    color='Accidents',
-    color_continuous_scale=px.colors.sequential.OrRd,
-    size_max=25,
-    hover_name='City',
-    hover_data=['State', 'Accidents'],
+    lat='Start_Lat',
+    lon='Start_Lng',
+    color='Temperature(F)',
+    hover_data=['City', 'State', 'Start_Time', 'Temperature(F)'],
+    color_continuous_scale=px.colors.sequential.Viridis,
+    size_max=15,
     zoom=3,
-    title='Accidents by Location'
+    title='Accident Locations (Sample)',
+    labels={'Temperature(F)': 'Temperature (°F)'}
 )
 
 fig_map.update_layout(mapbox_style="open-street-map")
@@ -177,15 +139,56 @@ st.plotly_chart(fig_map, use_container_width=True)
 
 with st.expander("How to read this chart"):
     st.write("""
-    - Each circle represents a city/location  
-    - Circle size and color intensity indicate the number of accidents  
-    - Hover to see city, state, and exact accident count  
-    - Darker / bigger circles → more accidents
+    - Each dot represents an accident location (sampled for performance)  
+    - Color indicates temperature at time of accident  
+    - Hover to see city, state, time, and temperature  
+    - Warmer colors = higher temperatures
     """)
 
 st.markdown("**Observations:**")
 st.write("""
-- High-accident cities are immediately visible by larger, darker circles  
-- Geographic patterns can reveal clusters or hotspots  
-- Useful for understanding accident distribution across regions
+- Geographic distribution shows accident hotspots.  
+- Color coding reveals temperature patterns by location.  
+- Clustering may indicate high-traffic areas or weather patterns.
+""")
+
+st.markdown("---")
+
+# -----------------------------------------------------------
+# 4) Time Series — Accidents Over Time
+# -----------------------------------------------------------
+st.subheader("4) Accidents Over Time")
+st.write("Question: When do accidents occur most frequently?")
+
+# Convert Start_Time to datetime and extract date
+time_df = filtered_df.copy()
+time_df['Start_Time'] = pd.to_datetime(time_df['Start_Time'])
+time_df['Date'] = time_df['Start_Time'].dt.date
+
+# Group by date
+daily_counts = time_df.groupby('Date').size().reset_index(name='Accidents')
+daily_counts['Date'] = pd.to_datetime(daily_counts['Date'])
+
+fig_time = px.line(
+    daily_counts,
+    x='Date',
+    y='Accidents',
+    title='Daily Accident Counts Over Time'
+)
+
+st.plotly_chart(fig_time, use_container_width=True)
+
+with st.expander("How to read this chart"):
+    st.write("""
+    - X axis: Date  
+    - Y axis: Number of accidents per day  
+    - Shows temporal patterns in accident frequency  
+    - Peaks may indicate specific events or seasonal patterns
+    """)
+
+st.markdown("**Observations:**")
+st.write("""
+- Time series reveals patterns in accident frequency.  
+- Seasonal or weekly patterns may be visible.  
+- Filtering by state and temperature affects temporal trends.
 """)
