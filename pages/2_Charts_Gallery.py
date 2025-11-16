@@ -26,10 +26,15 @@ st.sidebar.header("Filters")
 states = sorted(df['State'].dropna().unique())
 selected_states = st.sidebar.multiselect("Select States", states, default=states[:5])
 
-severity_values = sorted(df['Severity'].dropna().unique())
-selected_severity = st.sidebar.multiselect("Select Severity", severity_values, default=severity_values)
+# Temperature range filter
+temp_min = float(df['Temperature(F)'].min()) if not df['Temperature(F)'].isna().all() else 0
+temp_max = float(df['Temperature(F)'].max()) if not df['Temperature(F)'].isna().all() else 100
+selected_temp_range = st.sidebar.slider("Temperature Range (°F)", temp_min, temp_max, (temp_min, temp_max))
 
-filtered_df = df[(df['State'].isin(selected_states)) & (df['Severity'].isin(selected_severity))]
+filtered_df = df[
+    (df['State'].isin(selected_states)) & 
+    (df['Temperature(F)'].between(selected_temp_range[0], selected_temp_range[1]))
+]
 
 # -----------------------------------------------------------
 # 1) Bar Chart — Accidents by State
