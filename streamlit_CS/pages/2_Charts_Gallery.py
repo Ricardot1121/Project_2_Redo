@@ -1,15 +1,16 @@
-# 2_📊_Charts_Gallery.py
+# pages/2_Charts_Gallery.py
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 
-st.set_page_config(page_title="EDA Gallery", page_icon="📊")
-
+# -----------------------------------------------------------
+# Page Title
+# -----------------------------------------------------------
 st.title("📊 EDA Gallery — USA Accidents Sample")
 
-# ----------------------------
+# -----------------------------------------------------------
 # Load Data
-# ----------------------------
+# -----------------------------------------------------------
 @st.cache_data
 def load_data():
     return pd.read_parquet("data/accidents_small.parquet")
@@ -17,10 +18,11 @@ def load_data():
 df = load_data()
 st.write(f"Dataset rows: {len(df)}")
 
-# ----------------------------
-# Sidebar Filters (shared for multiple charts)
-# ----------------------------
+# -----------------------------------------------------------
+# Sidebar Filters
+# -----------------------------------------------------------
 st.sidebar.header("Filters")
+
 states = sorted(df['State'].dropna().unique())
 selected_states = st.sidebar.multiselect("Select States", states, default=states[:5])
 
@@ -29,9 +31,9 @@ selected_severity = st.sidebar.multiselect("Select Severity", severity_values, d
 
 filtered_df = df[(df['State'].isin(selected_states)) & (df['Severity'].isin(selected_severity))]
 
-# ----------------------------
+# -----------------------------------------------------------
 # 1) Bar Chart — Accidents by State
-# ----------------------------
+# -----------------------------------------------------------
 st.subheader("1) Accidents by State")
 st.write("Question: Which states have the most accidents in the selected sample?")
 
@@ -44,10 +46,10 @@ fig_bar = px.bar(
     y='State',
     orientation='h',
     text='Count',
-    labels={'Count':'Number of Accidents', 'State':'State'},
+    labels={'Count': 'Number of Accidents', 'State': 'State'},
     title='Accidents by State'
 )
-fig_bar.update_layout(yaxis={'categoryorder':'total ascending'})
+fig_bar.update_layout(yaxis={'categoryorder': 'total ascending'})
 
 st.plotly_chart(fig_bar, use_container_width=True)
 
@@ -68,9 +70,9 @@ st.write("""
 
 st.markdown("---")
 
-# ----------------------------
+# -----------------------------------------------------------
 # 2) Histogram — Severity Distribution
-# ----------------------------
+# -----------------------------------------------------------
 st.subheader("2) Accident Severity Distribution")
 st.write("Question: How are accident severities distributed?")
 
@@ -78,7 +80,7 @@ fig_hist = px.histogram(
     filtered_df,
     x='Severity',
     nbins=len(severity_values),
-    labels={'Severity':'Severity Level'},
+    labels={'Severity': 'Severity Level'},
     title='Severity Distribution of Accidents',
     color='Severity',
 )
@@ -101,22 +103,24 @@ st.write("""
 
 st.markdown("---")
 
-# ----------------------------
+# -----------------------------------------------------------
 # 3) Scatter Plot — Visibility vs Temperature
-# ----------------------------
+# -----------------------------------------------------------
 st.subheader("3) Visibility vs Temperature")
 st.write("Question: Is visibility related to temperature?")
 
-scatter_df = filtered_df.dropna(subset=['Visibility(mi)','Temperature(F)']).sample(n=min(2000,len(filtered_df)))
+scatter_df = filtered_df.dropna(subset=['Visibility(mi)', 'Temperature(F)'])
+if len(scatter_df) > 2000:
+    scatter_df = scatter_df.sample(n=2000, random_state=42)
 
 fig_scatter = px.scatter(
     scatter_df,
     x='Temperature(F)',
     y='Visibility(mi)',
     color='Severity',
-    hover_data=['Start_Time','State','City','Temperature(F)','Visibility(mi)','Severity'],
+    hover_data=['Start_Time', 'State', 'City', 'Temperature(F)', 'Visibility(mi)', 'Severity'],
     title='Visibility vs Temperature by Severity',
-    labels={'Temperature(F)':'Temperature (°F)','Visibility(mi)':'Visibility (mi)'}
+    labels={'Temperature(F)': 'Temperature (°F)', 'Visibility(mi)': 'Visibility (mi)'}
 )
 
 st.plotly_chart(fig_scatter, use_container_width=True)
@@ -139,14 +143,13 @@ st.write("""
 
 st.markdown("---")
 
-# ----------------------------
+# -----------------------------------------------------------
 # 4) Map — Accidents by Location
-# ----------------------------
+# -----------------------------------------------------------
 st.subheader("4) Map of Accidents")
 st.write("Question: Where do most accidents occur geographically?")
 
-# Aggregate by city or coordinates
-map_df = filtered_df.groupby(['City','State','Latitude','Longitude']).size().reset_index(name='Accidents')
+map_df = filtered_df.groupby(['City', 'State', 'Latitude', 'Longitude']).size().reset_index(name='Accidents')
 
 fig_map = px.scatter_mapbox(
     map_df,
@@ -157,13 +160,13 @@ fig_map = px.scatter_mapbox(
     color_continuous_scale=px.colors.sequential.OrRd,
     size_max=25,
     hover_name='City',
-    hover_data=['State','Accidents'],
+    hover_data=['State', 'Accidents'],
     zoom=3,
     title='Accidents by Location'
 )
 
 fig_map.update_layout(mapbox_style="open-street-map")
-fig_map.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
 
 st.plotly_chart(fig_map, use_container_width=True)
 
@@ -181,4 +184,3 @@ st.write("""
 - Geographic patterns can reveal clusters or hotspots  
 - Useful for understanding accident distribution across regions
 """)
-
