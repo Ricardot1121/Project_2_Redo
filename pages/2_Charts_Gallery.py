@@ -160,23 +160,34 @@ st.markdown("---")
 st.subheader("4) Accidents Over Time")
 st.write("Question: When do accidents occur most frequently?")
 
-# Convert Start_Time to datetime and extract date
+# Convert Start_Time to datetime with error handling
 time_df = filtered_df.copy()
-time_df['Start_Time'] = pd.to_datetime(time_df['Start_Time'])
-time_df['Date'] = time_df['Start_Time'].dt.date
-
-# Group by date
-daily_counts = time_df.groupby('Date').size().reset_index(name='Accidents')
-daily_counts['Date'] = pd.to_datetime(daily_counts['Date'])
-
-fig_time = px.line(
-    daily_counts,
-    x='Date',
-    y='Accidents',
-    title='Daily Accident Counts Over Time'
-)
-
-st.plotly_chart(fig_time, use_container_width=True)
+try:
+    time_df['Start_Time'] = pd.to_datetime(time_df['Start_Time'], errors='coerce')
+    # Remove rows where datetime conversion failed
+    time_df = time_df.dropna(subset=['Start_Time'])
+    
+    if len(time_df) > 0:
+        time_df['Date'] = time_df['Start_Time'].dt.date
+        
+        # Group by date
+        daily_counts = time_df.groupby('Date').size().reset_index(name='Accidents')
+        daily_counts['Date'] = pd.to_datetime(daily_counts['Date'])
+        
+        fig_time = px.line(
+            daily_counts,
+            x='Date',
+            y='Accidents',
+            title='Daily Accident Counts Over Time'
+        )
+        
+        st.plotly_chart(fig_time, use_container_width=True)
+    else:
+        st.warning("No valid dates found for time series analysis.")
+        
+except Exception as e:
+    st.error(f"Error processing dates: {str(e)}")
+    st.info("Skipping time series chart due to date format issues.")
 
 with st.expander("How to read this chart"):
     st.write("""
