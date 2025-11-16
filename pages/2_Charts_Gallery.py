@@ -13,7 +13,7 @@ st.title("📊 EDA Gallery — USA Accidents Sample")
 # -----------------------------------------------------------
 @st.cache_data
 def load_data():
-    return pd.read_parquet("data/accidents_small.parquet")
+    return pd.read_csv("data/accidents_small.csv")
 
 df = load_data()
 st.write(f"Dataset rows: {len(df)}")

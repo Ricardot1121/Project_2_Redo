@@ -14,7 +14,7 @@ st.title("📈 Dashboard — USA Accidents Overview")
 # -----------------------------------------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_parquet("data/accidents_small.parquet")
+    df = pd.read_csv("data/accidents_small.csv")
     df['Start_Time'] = pd.to_datetime(df['Start_Time'])
     return df
 
