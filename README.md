@@ -1,8 +1,8 @@
 # USA Accidents Streamlit Portfolio
 
-Name - Ricardo Torres
-LinkedIn - https://www.linkedin.com/in/ricardo-torres-99b58a2b9/
-Gmail - ricardot1121@gmail.com
+*Name - Ricardo Torres
+*LinkedIn - https://www.linkedin.com/in/ricardo-torres-99b58a2b9/
+*Gmail - ricardot1121@gmail.com
 
 ## Overview
 This is a multi-page Streamlit app that serves as a professional portfolio and mini analytics product using the **USA Accidents dataset**. The app includes:
