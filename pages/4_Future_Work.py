@@ -1,88 +1,78 @@
+# 4_🧭_Future_Work.py
 import streamlit as st
-from datetime import datetime
 
-# -----------------------------------------------------------
-# Page Configuration
-# -----------------------------------------------------------
-st.set_page_config(
-    page_title="Data Portfolio – Your Name",
-    page_icon="📊",
-    layout="wide"
-)
+st.set_page_config(page_title="Future Work", page_icon="🧭")
 
-# -----------------------------------------------------------
-# Branding / Header
-# -----------------------------------------------------------
-st.title("📊 Data Science & Visualization Portfolio")
-st.subheader("By **Ricardo Torres**")
-st.caption("A multi-page analytics app featuring a professional bio, EDA gallery, dashboard, and future work.")
+st.title("🧭 Future Work & Reflection")
 
-# Dataset info banner
-st.info("🚗 **Featured Dataset:** US Accidents (2016-2023) - A comprehensive traffic accident dataset from Kaggle with 77,000+ records covering 49 US states.")
+# ----------------------------
+# Future Work Opportunities
+# ----------------------------
+st.subheader("🚀 Future Work & Enhancement Opportunities")
 
-# -----------------------------------------------------------
-# Main Description
-# -----------------------------------------------------------
-st.markdown(
-    """
-    Welcome! This portfolio app includes:
-    
-    ### 🧑‍💼 Bio  
-    A short professional introduction, highlights, and visualization philosophy.
+st.markdown("### 1. 🤖 Advanced Analytics & Machine Learning")
+st.write("""
+**Predictive Modeling:**
+- Develop time series forecasting models to predict accident frequency by state/region
+- Implement seasonal decomposition to identify recurring patterns (holidays, weather seasons)
+- Build classification models to predict accident severity based on environmental factors
 
-    ### 📊 EDA Gallery  
-    Four exploratory visualizations with descriptions, explanations, and insights.
+**Statistical Analysis:**
+- Conduct hypothesis testing to validate observed patterns
+- Perform correlation analysis between temperature, location, and accident frequency
+- Implement clustering algorithms to identify accident hotspots and similar regions
+""")
 
-    ### 📈 Dashboard  
-    Interactive filters, KPIs, linked charts, and narrative interpretation.
+st.markdown("### 2. 📊 Enhanced Data Integration & Enrichment")
+st.write("""
+**External Data Sources:**
+- Integrate weather data (precipitation, visibility, wind speed) for deeper environmental analysis
+- Add demographic and economic data to understand socioeconomic factors
+- Include traffic volume and road infrastructure data for context
 
-    ### 🧭 Future Work  
-    Next steps, reflections, and improvements.
+**Real-time Capabilities:**
+- Connect to live traffic APIs for real-time accident monitoring
+- Implement automated data refresh and alert systems
+- Create dynamic KPI thresholds based on historical patterns
+""")
 
-    Use the **sidebar** to navigate between pages.
-    """
-)
+st.markdown("### 3. 🎨 User Experience & Accessibility Improvements")
+st.write("""
+**Advanced Interactivity:**
+- Add cross-filtering between all visualizations
+- Implement brushing and linking across multiple charts
+- Create custom filtering with date range pickers and multi-dimensional sliders
 
-# -----------------------------------------------------------
-# Optional: App Organization Expander
-# -----------------------------------------------------------
-with st.expander("ℹ️ How this App is Organized"):
-    st.write(
-        """
-        - `app.py` → Main entry page  
-        - `pages/1_📄_Bio.py` → Bio page  
-        - `pages/2_📊_Charts_Gallery.py` → EDA gallery  
-        - `pages/3_📈_Dashboard.py` → Main dashboard  
-        - `pages/4_🧭_Future_Work.py` → Future improvements & reflection  
+**Accessibility & Inclusivity:**
+- Implement WCAG 2.1 AA compliance for screen readers
+- Add keyboard navigation for all interactive elements
+- Provide alternative text descriptions for all visualizations
+- Include data sonification for visually impaired users
+""")
 
-        Add CSVs (under 25MB) into `/data/`.
-        Images, icons, and logos go in `/assets/`.
-        """
-    )
-
-# -----------------------------------------------------------
-# Professional Polish & Accessibility
-# -----------------------------------------------------------
 st.markdown("---")
-st.markdown("### 🎯 Portfolio Highlights")
 
-col1, col2, col3 = st.columns(3)
+# ----------------------------
+# Reflection on Prototype → Final Build
+# ----------------------------
+st.subheader("Reflection")
+st.write("""
+- The final app is multi-page, fully interactive, and uses real dataset visualizations, unlike the initial static prototype.  
+- Charts now include hover tooltips, linked filters, and KPIs for dynamic exploration.  
+- The map visualization was added to enhance geospatial insights, which was not in the prototype.  
+- Sidebar filters improve user navigation and exploration, making the dashboard more usable and informative.
+""")
 
-with col1:
-    st.markdown("**📊 Data Visualization**")
-    st.write("4+ chart types with interactive elements and comprehensive documentation")
-
-with col2:
-    st.markdown("**♿ Accessibility**")
-    st.write("Color-blind friendly palettes, alt-text, and clear labels throughout")
-
-with col3:
-    st.markdown("**⚖️ Ethics & Transparency**")
-    st.write("Clear data limitations, source attribution, and responsible analysis")
-
-# -----------------------------------------------------------
-# Footer
-# -----------------------------------------------------------
 st.markdown("---")
-st.markdown("---")
-st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d')} • Built with Streamlit 🌱")
+
+# ----------------------------
+# Accessibility & Ethics Reminder
+# ----------------------------
+st.subheader("Accessibility & Ethics Notes")
+st.write("""
+- Color palettes were chosen to be color-blind friendly and charts include clear labels.  
+- The dataset contains real people involved in accidents; visualizations reflect patterns only, not individual behaviors.  
+- Interpret results carefully; reporting may be biased by underreporting or regional differences.
+""")
+
+st.caption("End of Future Work Page — Built with Streamlit 🌱")
