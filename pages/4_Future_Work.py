@@ -1,47 +1,88 @@
-# 4_🧭_Future_Work.py
 import streamlit as st
+from datetime import datetime
 
-st.set_page_config(page_title="Future Work", page_icon="🧭")
+# -----------------------------------------------------------
+# Page Configuration
+# -----------------------------------------------------------
+st.set_page_config(
+    page_title="Data Portfolio – Your Name",
+    page_icon="📊",
+    layout="wide"
+)
 
-st.title("🧭 Future Work & Reflection")
+# -----------------------------------------------------------
+# Branding / Header
+# -----------------------------------------------------------
+st.title("📊 Data Science & Visualization Portfolio")
+st.subheader("By **Ricardo Torres**")
+st.caption("A multi-page analytics app featuring a professional bio, EDA gallery, dashboard, and future work.")
 
-# ----------------------------
-# Next Steps / Improvements
-# ----------------------------
-st.subheader("Next Steps / Improvements")
-st.write("""
-Here are some concrete next steps I would pursue to enhance this portfolio and dashboard:
+# Dataset info banner
+st.info("🚗 **Featured Dataset:** US Accidents (2016-2023) - A comprehensive traffic accident dataset from Kaggle with 77,000+ records covering 49 US states.")
 
-- **Forecasting & trend analysis:** Add predictive models to estimate accident counts by state or severity.  
-- **Additional filters & KPIs:** Include weather conditions, time of day, or road type to explore correlations.  
-- **Enhanced geospatial analysis:** Use clustering or heatmaps to identify high-risk zones more precisely.  
-- **Accessibility improvements:** Add color-blind safe palettes, alternative text for charts, and keyboard navigation support.  
-- **Data enrichment:** Integrate external datasets (traffic volume, population, or demographics) to provide context.
-""")
+# -----------------------------------------------------------
+# Main Description
+# -----------------------------------------------------------
+st.markdown(
+    """
+    Welcome! This portfolio app includes:
+    
+    ### 🧑‍💼 Bio  
+    A short professional introduction, highlights, and visualization philosophy.
 
+    ### 📊 EDA Gallery  
+    Four exploratory visualizations with descriptions, explanations, and insights.
+
+    ### 📈 Dashboard  
+    Interactive filters, KPIs, linked charts, and narrative interpretation.
+
+    ### 🧭 Future Work  
+    Next steps, reflections, and improvements.
+
+    Use the **sidebar** to navigate between pages.
+    """
+)
+
+# -----------------------------------------------------------
+# Optional: App Organization Expander
+# -----------------------------------------------------------
+with st.expander("ℹ️ How this App is Organized"):
+    st.write(
+        """
+        - `app.py` → Main entry page  
+        - `pages/1_📄_Bio.py` → Bio page  
+        - `pages/2_📊_Charts_Gallery.py` → EDA gallery  
+        - `pages/3_📈_Dashboard.py` → Main dashboard  
+        - `pages/4_🧭_Future_Work.py` → Future improvements & reflection  
+
+        Add CSVs (under 25MB) into `/data/`.
+        Images, icons, and logos go in `/assets/`.
+        """
+    )
+
+# -----------------------------------------------------------
+# Professional Polish & Accessibility
+# -----------------------------------------------------------
 st.markdown("---")
+st.markdown("### 🎯 Portfolio Highlights")
 
-# ----------------------------
-# Reflection on Prototype → Final Build
-# ----------------------------
-st.subheader("Reflection")
-st.write("""
-- The final app is multi-page, fully interactive, and uses real dataset visualizations, unlike the initial static prototype.  
-- Charts now include hover tooltips, linked filters, and KPIs for dynamic exploration.  
-- The map visualization was added to enhance geospatial insights, which was not in the prototype.  
-- Sidebar filters improve user navigation and exploration, making the dashboard more usable and informative.
-""")
+col1, col2, col3 = st.columns(3)
 
+with col1:
+    st.markdown("**📊 Data Visualization**")
+    st.write("4+ chart types with interactive elements and comprehensive documentation")
+
+with col2:
+    st.markdown("**♿ Accessibility**")
+    st.write("Color-blind friendly palettes, alt-text, and clear labels throughout")
+
+with col3:
+    st.markdown("**⚖️ Ethics & Transparency**")
+    st.write("Clear data limitations, source attribution, and responsible analysis")
+
+# -----------------------------------------------------------
+# Footer
+# -----------------------------------------------------------
 st.markdown("---")
-
-# ----------------------------
-# Accessibility & Ethics Reminder
-# ----------------------------
-st.subheader("Accessibility & Ethics Notes")
-st.write("""
-- Color palettes were chosen to be color-blind friendly and charts include clear labels.  
-- The dataset contains real people involved in accidents; visualizations reflect patterns only, not individual behaviors.  
-- Interpret results carefully; reporting may be biased by underreporting or regional differences.
-""")
-
-st.caption("End of Future Work Page — Built with Streamlit 🌱")
+st.markdown("---")
+st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d')} • Built with Streamlit 🌱")
