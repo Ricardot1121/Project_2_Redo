@@ -19,7 +19,9 @@ def load_data():
     return df
 
 df = load_data()
-st.write(f"Dataset rows: {len(df)}")
+
+# Data source info box
+st.info("📊 **US Accidents Dataset** | Source: [Kaggle](https://www.kaggle.com/datasets/sobhanmoosavi/us-accidents) | Rows: {:,}".format(len(df)))
 
 # -----------------------------------------------------------
 # Filters
@@ -134,6 +136,8 @@ st.write("""
 - **Filter impact:** Adjusting the state, temperature, or date filters will update both charts and KPIs instantly.  
 - **Data coverage:** Some states may have fewer reported accidents due to underreporting or data limitations.  
 """)
+
+st.info("⚖️ **Ethics Note:** This data represents real traffic incidents affecting real people. Analysis is for educational purposes only. Findings should not be used for policy decisions without additional context and validation.")
 
 # -----------------------------------------------------------
 # Footer
