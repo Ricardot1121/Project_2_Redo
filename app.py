@@ -5,7 +5,7 @@ from datetime import datetime
 # Page Configuration
 # -----------------------------------------------------------
 st.set_page_config(
-    page_title="Data Portfolio – Ricardo Torres",
+    page_title="Data Portfolio – Your Name",
     page_icon="📊",
     layout="wide"
 )
@@ -16,6 +16,9 @@ st.set_page_config(
 st.title("📊 Data Science & Visualization Portfolio")
 st.subheader("By **Ricardo Torres**")
 st.caption("A multi-page analytics app featuring a professional bio, EDA gallery, dashboard, and future work.")
+
+# Dataset info banner
+st.info("🚗 **Featured Dataset:** US Accidents (2016-2023) - A comprehensive traffic accident dataset from Kaggle with 77,000+ records covering 49 US states.")
 
 # -----------------------------------------------------------
 # Main Description
