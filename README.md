@@ -19,7 +19,7 @@ This is a multi-page Streamlit app that serves as both a professional portfolio 
 ## Bio Page
 A professional summary with highlights and visualization philosophy.
 
-![Bio Page Screenshot](assets/bio.png)
+![Bio Page Screenshot](assets/Bio.png)
 
 ## EDA Gallery
 Four charts with interactive exploration and observations.
