@@ -5,7 +5,7 @@ from datetime import datetime
 # Page Configuration
 # -----------------------------------------------------------
 st.set_page_config(
-    page_title="Data Portfolio – Your Name",
+    page_title="Data Portfolio – Ricardo Torres",
     page_icon="📊",
     layout="wide"
 )
@@ -61,7 +61,28 @@ with st.expander("ℹ️ How this App is Organized"):
     )
 
 # -----------------------------------------------------------
+# Professional Polish & Accessibility
+# -----------------------------------------------------------
+st.markdown("---")
+st.markdown("### 🎯 Portfolio Highlights")
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.markdown("**📊 Data Visualization**")
+    st.write("4+ chart types with interactive elements and comprehensive documentation")
+
+with col2:
+    st.markdown("**♿ Accessibility**")
+    st.write("Color-blind friendly palettes, alt-text, and clear labels throughout")
+
+with col3:
+    st.markdown("**⚖️ Ethics & Transparency**")
+    st.write("Clear data limitations, source attribution, and responsible analysis")
+
+# -----------------------------------------------------------
 # Footer
 # -----------------------------------------------------------
+st.markdown("---")
 st.markdown("---")
 st.caption(f"Last updated: {datetime.now().strftime('%Y-%m-%d')} • Built with Streamlit 🌱")
