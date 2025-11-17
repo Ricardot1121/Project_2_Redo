@@ -34,8 +34,8 @@ KPIs, linked visuals, and dynamic filters.
 ## How to Run Locally
 1. Clone the repository:
    ```bash
-   pip install -r requirements.txt
    git clone https://github.com/Ricardot1121/Project_2_Redo.git
+   pip install -r requirements.txt
    cd streamlit_app
 
 ## AI
