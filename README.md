@@ -38,5 +38,12 @@ KPIs, linked visuals, and dynamic filters.
    cd streamlit_app
 
 ## AI
+Microsoft Copilot helped me create amazing structures and build the scale and filters, reworded my sentence to make it look professional, and helped me understand my data more by helping me explain my charts I made. It also helped me create little tabs to explain what to look at in each of the data sets. Overall, it guided me on how exactly how to present clean and readable data with explainations with ways I want to say it, but more professional, and helped me overall understand how I needed to structure my data representation. 
+GitHub Copilot was a mojor help helping with error handling and incorrect locations to folder layouts and linking the correct images together. It was a huge help in resizing the data to make sure it would fit into github. The code examples were from previous 
+
 - Microsoft Copilot. Copilot AI Assistant. Microsoft, 2025.
+- GitHub Copilot. AI Coding Assistant. GitHub, 2025.
+
+## My Thoughts
+I overall love what I created so far, with the help of AI, with the structure, I can fully see how this all came together explain what I have found in my data. 
 
