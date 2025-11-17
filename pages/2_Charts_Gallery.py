@@ -1,205 +1,144 @@
-# pages/2_Charts_Gallery.py
+# pages/3_Dashboard.py
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from datetime import datetime
 
 # -----------------------------------------------------------
 # Page Title
 # -----------------------------------------------------------
-st.title("📊 EDA Gallery — USA Accidents Sample")
+st.title("📈 Dashboard — USA Accidents Overview")
 
 # -----------------------------------------------------------
 # Load Data
 # -----------------------------------------------------------
 @st.cache_data
 def load_data():
-    return pd.read_csv("data/accidents_small.csv")
+    df = pd.read_csv("data/accidents_small.csv")
+    df['Start_Time'] = pd.to_datetime(df['Start_Time'], errors='coerce')
+    return df
 
 df = load_data()
-st.write(f"Dataset rows: {len(df)}")
-st.write(f"Available columns: {', '.join(df.columns)}")
+
+# Data source info box
+st.info("📊 **US Accidents Dataset** | Source: [Kaggle](https://www.kaggle.com/datasets/sobhanmoosavi/us-accidents) | Rows: {:,}".format(len(df)))
 
 # -----------------------------------------------------------
-# Sidebar Filters
+# Filters
 # -----------------------------------------------------------
-st.sidebar.header("Filters")
+st.sidebar.header("Dashboard Filters")
 
+# States
 states = sorted(df['State'].dropna().unique())
 selected_states = st.sidebar.multiselect("Select States", states, default=states[:5])
 
-# Temperature range filter (since we have Temperature(F))
+# Temperature range filter
 temp_min = float(df['Temperature(F)'].min()) if not df['Temperature(F)'].isna().all() else 0
 temp_max = float(df['Temperature(F)'].max()) if not df['Temperature(F)'].isna().all() else 100
 selected_temp_range = st.sidebar.slider("Temperature Range (°F)", temp_min, temp_max, (temp_min, temp_max))
 
-filtered_df = df[
-    (df['State'].isin(selected_states)) & 
-    (df['Temperature(F)'].between(selected_temp_range[0], selected_temp_range[1]))
-]
-
-# -----------------------------------------------------------
-# 1) Bar Chart — Accidents by State
-# -----------------------------------------------------------
-st.subheader("1) Accidents by State")
-st.write("Question: Which states have the most accidents in the selected sample?")
-
-state_counts = filtered_df['State'].value_counts().reset_index()
-state_counts.columns = ['State', 'Count']
-
-fig_bar = px.bar(
-    state_counts,
-    x='Count',
-    y='State',
-    orientation='h',
-    text='Count',
-    labels={'Count': 'Number of Accidents', 'State': 'State'},
-    title='Accidents by State'
-)
-fig_bar.update_layout(yaxis={'categoryorder': 'total ascending'})
-
-st.plotly_chart(fig_bar, use_container_width=True)
-
-with st.expander("How to read this chart"):
-    st.write("""
-    - Y axis: State abbreviations  
-    - X axis: Number of accidents  
-    - Bars ordered by accident count  
-    - Hover to see exact numbers
-    """)
-
-st.markdown("**Observations:**")
-st.write("""
-- Some states have more recorded accidents than others.  
-- Counts reflect the sample and reporting; interpret with caution.  
-- Useful for identifying high-accident regions in this dataset.
-""")
-
-st.markdown("---")
-
-# -----------------------------------------------------------
-# 2) Histogram — Temperature Distribution
-# -----------------------------------------------------------
-st.subheader("2) Temperature Distribution")
-st.write("Question: How are accident temperatures distributed?")
-
-fig_hist = px.histogram(
-    filtered_df.dropna(subset=['Temperature(F)']),
-    x='Temperature(F)',
-    nbins=30,
-    labels={'Temperature(F)': 'Temperature (°F)'},
-    title='Temperature Distribution of Accidents'
-)
-st.plotly_chart(fig_hist, use_container_width=True)
-
-with st.expander("How to read this chart"):
-    st.write("""
-    - X axis: Temperature in Fahrenheit  
-    - Y axis: Number of accidents  
-    - Shows the distribution of temperatures when accidents occurred  
-    - Filter selections in the sidebar affect this chart
-    """)
-
-st.markdown("**Observations:**")
-st.write("""
-- Most accidents occur in moderate temperature ranges.  
-- Extreme temperatures (very hot or cold) may have fewer accidents.  
-- Temperature filtering affects the distribution shape.
-""")
-
-st.markdown("---")
-
-# -----------------------------------------------------------
-# 3) Scatter Plot — Location Map
-# -----------------------------------------------------------
-st.subheader("3) Accidents by Location")
-st.write("Question: Where do accidents occur geographically?")
-
-# Sample data for performance if too many points
-map_df = filtered_df.dropna(subset=['Start_Lat', 'Start_Lng'])
-if len(map_df) > 1000:
-    map_df = map_df.sample(n=1000, random_state=42)
-
-fig_map = px.scatter_mapbox(
-    map_df,
-    lat='Start_Lat',
-    lon='Start_Lng',
-    color='Temperature(F)',
-    hover_data=['City', 'State', 'Start_Time', 'Temperature(F)'],
-    color_continuous_scale=px.colors.sequential.Viridis,
-    size_max=15,
-    zoom=3,
-    title='Accident Locations (Sample)',
-    labels={'Temperature(F)': 'Temperature (°F)'}
-)
-
-fig_map.update_layout(mapbox_style="open-street-map")
-fig_map.update_layout(margin={"r": 0, "t": 0, "l": 0, "b": 0})
-
-st.plotly_chart(fig_map, use_container_width=True)
-
-with st.expander("How to read this chart"):
-    st.write("""
-    - Each dot represents an accident location (sampled for performance)  
-    - Color indicates temperature at time of accident  
-    - Hover to see city, state, time, and temperature  
-    - Warmer colors = higher temperatures
-    """)
-
-st.markdown("**Observations:**")
-st.write("""
-- Geographic distribution shows accident hotspots.  
-- Color coding reveals temperature patterns by location.  
-- Clustering may indicate high-traffic areas or weather patterns.
-""")
-
-st.markdown("---")
-
-# -----------------------------------------------------------
-# 4) Time Series — Accidents Over Time
-# -----------------------------------------------------------
-st.subheader("4) Accidents Over Time")
-st.write("Question: When do accidents occur most frequently?")
-
-# Convert Start_Time to datetime with error handling
-time_df = filtered_df.copy()
+# Date range with error handling
 try:
-    time_df['Start_Time'] = pd.to_datetime(time_df['Start_Time'], errors='coerce')
-    # Remove rows where datetime conversion failed
-    time_df = time_df.dropna(subset=['Start_Time'])
-    
-    if len(time_df) > 0:
-        time_df['Date'] = time_df['Start_Time'].dt.date
-        
-        # Group by date
-        daily_counts = time_df.groupby('Date').size().reset_index(name='Accidents')
-        daily_counts['Date'] = pd.to_datetime(daily_counts['Date'])
-        
-        fig_time = px.line(
-            daily_counts,
-            x='Date',
-            y='Accidents',
-            title='Daily Accident Counts Over Time'
+    valid_dates = df['Start_Time'].dropna()
+    if len(valid_dates) > 0:
+        min_date = valid_dates.min().date()
+        max_date = valid_dates.max().date()
+        selected_dates = st.sidebar.date_input(
+            "Select Date Range",
+            value=[min_date, max_date],
+            min_value=min_date,
+            max_value=max_date
         )
-        
-        st.plotly_chart(fig_time, use_container_width=True)
     else:
-        st.warning("No valid dates found for time series analysis.")
-        
+        st.sidebar.warning("No valid dates found")
+        selected_dates = []
 except Exception as e:
-    st.error(f"Error processing dates: {str(e)}")
-    st.info("Skipping time series chart due to date format issues.")
+    st.sidebar.error(f"Date processing error: {str(e)}")
+    selected_dates = []
 
-with st.expander("How to read this chart"):
-    st.write("""
-    - X axis: Date  
-    - Y axis: Number of accidents per day  
-    - Shows temporal patterns in accident frequency  
-    - Peaks may indicate specific events or seasonal patterns
-    """)
+# Guard against empty selection
+if isinstance(selected_dates, list) and len(selected_dates) == 2:
+    start_date, end_date = selected_dates
+else:
+    start_date, end_date = min_date, max_date
 
-st.markdown("**Observations:**")
+# Filtered dataframe
+if len(selected_dates) == 2:
+    start_date, end_date = selected_dates
+    filtered_df = df[
+        (df['State'].isin(selected_states)) &
+        (df['Temperature(F)'].between(selected_temp_range[0], selected_temp_range[1])) &
+        (df['Start_Time'].dt.date.between(start_date, end_date))
+    ]
+else:
+    filtered_df = df[
+        (df['State'].isin(selected_states)) &
+        (df['Temperature(F)'].between(selected_temp_range[0], selected_temp_range[1]))
+    ]
+
+# -----------------------------------------------------------
+# KPIs
+# -----------------------------------------------------------
+st.subheader("Key Performance Indicators (KPIs)")
+
+kpi1, kpi2, kpi3, kpi4 = st.columns(4)
+
+kpi1.metric("Total Accidents", len(filtered_df))
+kpi2.metric("Avg Temperature", f"{round(filtered_df['Temperature(F)'].mean(), 1)}°F" if not filtered_df.empty else "N/A")
+kpi3.metric("Unique States", filtered_df['State'].nunique())
+kpi4.metric("Latest Accident", filtered_df['Start_Time'].max().strftime("%Y-%m-%d") if not filtered_df.empty and not filtered_df['Start_Time'].isna().all() else "N/A")
+
+st.markdown("---")
+
+# -----------------------------------------------------------
+# Charts
+# -----------------------------------------------------------
+st.subheader("Linked Charts")
+
+# 1) Accidents by State (Bar)
+if not filtered_df.empty:
+    state_counts = filtered_df['State'].value_counts().reset_index()
+    state_counts.columns = ['State', 'Count']
+    fig_state = px.bar(
+        state_counts,
+        x='State', y='Count',
+        title="Accidents by State",
+        text='Count'
+    )
+    st.plotly_chart(fig_state, use_container_width=True)
+
+    # 2) Temperature over Time (Line)
+    temp_time = filtered_df.dropna(subset=['Start_Time', 'Temperature(F)']).copy()
+    if len(temp_time) > 0:
+        temp_time['Date'] = temp_time['Start_Time'].dt.date
+        daily_temp = temp_time.groupby('Date')['Temperature(F)'].mean().reset_index()
+        daily_temp['Date'] = pd.to_datetime(daily_temp['Date'])
+        fig_line = px.line(
+            daily_temp,
+            x='Date', y='Temperature(F)',
+            title="Average Temperature Over Time"
+        )
+        st.plotly_chart(fig_line, use_container_width=True)
+    else:
+        st.info("No valid temperature data for selected filters.")
+else:
+    st.warning("No data available for the selected filters.")
+
+st.markdown("---")
+
+# -----------------------------------------------------------
+# Narrative / Insights
+# -----------------------------------------------------------
+st.subheader("Narrative Insights")
 st.write("""
-- Time series reveals patterns in accident frequency.  
-- Seasonal or weekly patterns may be visible.  
-- Filtering by state and temperature affects temporal trends.
+- **Accident hotspots:** The bar chart shows which states have the most accidents in the selected filters.  
+- **Trends over time:** The line chart shows how average temperatures vary across time. This may indicate seasonal patterns.  
+- **Filter impact:** Adjusting the state, temperature, or date filters will update both charts and KPIs instantly.  
+- **Data coverage:** Some states may have fewer reported accidents due to underreporting or data limitations.  
 """)
+
+# -----------------------------------------------------------
+# Footer
+# -----------------------------------------------------------
+st.markdown("---")
+st.caption(f"Data source: Kaggle — USA Accidents Dataset | Last refreshed: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
