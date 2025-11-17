@@ -24,12 +24,12 @@ A professional summary with highlights and visualization philosophy.
 ## EDA Gallery
 Four charts with interactive exploration and observations.
 
-![EDA Gallery Screenshot](assets/eda_gallery.png)
+![EDA Gallery Screenshot](assets/Charts.png)
 
 ## Dashboard
 KPIs, linked visuals, and dynamic filters.
 
-![Dashboard Screenshot](assets/dashboard.png)
+![Dashboard Screenshot](assets/Dash.png)
 
 ## How to Run Locally
 1. Clone the repository:
