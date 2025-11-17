@@ -15,6 +15,6 @@ This is a multi-page Streamlit app that serves as a professional portfolio and m
 ## How to Run Locally
 1. Clone the repository:
    ```bash
-   git clone <your-repo-url>
+   git clone https://github.com/Ricardot1121/Project_2_Redo.git
    cd streamlit_app
 
